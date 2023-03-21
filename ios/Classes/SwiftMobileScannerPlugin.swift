@@ -37,20 +37,33 @@ public class SwiftMobileScannerPlugin: NSObject, FlutterPlugin {
     
     init(barcodeHandler: BarcodeHandler, registry: FlutterTextureRegistry) {
         self.mobileScanner = MobileScanner(registry: registry, mobileScannerCallback: { barcodes, error, image in
+
+            var barcodesData = []
             if barcodes != nil {
-                let barcodesMap = barcodes!.compactMap { barcode in
+                for (barcode) in barcodes! {
                     if (SwiftMobileScannerPlugin.scanWindow != nil) {
                         if (SwiftMobileScannerPlugin.isBarcodeInScanWindow(barcode: barcode, imageSize: image.size)) {
-                            return barcode.data
+                            barcodesData.append(barcode.data)
                         } else {
-                            return nil
+                            continue
                         }
                     } else {
-                        return barcode.data
+                        barcodesData.append(barcode.data)
                     }
                 }
-                if (!barcodesMap.isEmpty) {
-                    barcodeHandler.publishEvent(["name": "barcode", "data": barcodesMap, "image": FlutterStandardTypedData(bytes: image.jpegData(compressionQuality: 0.8)!), "width": image.size.width, "height": image.size.height])
+//                let barcodesMap = barcodes!.compactMap { barcode in
+//                    if (SwiftMobileScannerPlugin.scanWindow != nil) {
+//                        if (SwiftMobileScannerPlugin.isBarcodeInScanWindow(barcode: barcode, imageSize: image.size)) {
+//                            return barcode.data
+//                        } else {
+//                            return nil
+//                        }
+//                    } else {
+//                        return barcode.data
+//                    }
+//                }
+                if (!barcodesData.isEmpty) {
+                    barcodeHandler.publishEvent(["name": "barcode", "data": barcodesData, "image": FlutterStandardTypedData(bytes: image.jpegData(compressionQuality: 0.8)!), "width": image.size.width, "height": image.size.height])
                 }
             } else if (error != nil){
                 barcodeHandler.publishEvent(["name": "error", "data": error!.localizedDescription])
@@ -223,8 +236,12 @@ public class SwiftMobileScannerPlugin: NSObject, FlutterPlugin {
 
         mobileScanner.analyzeImage(image: uiImage!, position: AVCaptureDevice.Position.back, callback: { [self] barcodes, error in
             if error == nil && barcodes != nil && !barcodes!.isEmpty {
-                let barcodesMap = barcodes!.compactMap { barcode in barcode.data }
-                let event: [String: Any?] = ["name": "barcode", "data": barcodesMap]
+                var barcodesData = []
+                for (barcode) in barcodes! {
+                    barcodesData.append(barcode.data)
+                }
+//                let barcodesMap = barcodes!.compactMap { barcode in barcode.data }
+                let event: [String: Any?] = ["name": "barcode", "data": barcodesData]
                 barcodeHandler.publishEvent(event)
                 result(true)
             } else {

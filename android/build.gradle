@@ -2,19 +2,19 @@ group 'dev.steenbakker.mobile_scanner'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.8.22'
+    ext.kotlin_version = '1.7.22'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.2'
+        classpath 'com.android.tools.build:gradle:8.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
-rootProject.allprojects {
+allprojects {
     repositories {
         google()
         mavenCentral()
@@ -25,6 +25,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    if (project.android.hasProperty("namespace")) {
+        namespace 'dev.steenbakker.mobile_scanner'
+    }
+
     compileSdkVersion 33
 
     compileOptions {
@@ -38,24 +42,43 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
     }
 
     defaultConfig {
         minSdkVersion 21
+        consumerProguardFiles 'proguard-rules.pro'
     }
 
-    namespace 'dev.steenbakker.mobile_scanner'
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+                outputs.upToDateWhen {false}
+                showStandardStreams = true
+            }
+        }
+    }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    // Use this dependency to bundle the model with your app
-    implementation 'com.google.mlkit:barcode-scanning:17.1.0'
-    // Use this dependency to use the dynamically downloaded model in Google Play Services
-//    implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:18.1.0'
+    def useUnbundled = project.findProperty('dev.steenbakker.mobile_scanner.useUnbundled') ?: false
+    if (useUnbundled.toBoolean()) {
+        // Dynamically downloaded model via Google Play Services
+        implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.0'
+    } else {
+        // Bundled model in app
+        implementation 'com.google.mlkit:barcode-scanning:17.2.0'
+    }
 
-    implementation 'androidx.camera:camera-camera2:1.2.2'
+    implementation 'androidx.camera:camera-camera2:1.2.3'
     implementation 'androidx.camera:camera-lifecycle:1.2.3'
     implementation 'androidx.camera:camera-camera2:1.2.3'
+
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'org.mockito:mockito-core:5.0.0'    
 }

@@ -3,6 +3,7 @@ import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
+import 'package:mobile_scanner/src/enums/barcode_format.dart';
 import 'package:mobile_scanner/src/enums/camera_facing.dart';
 import 'package:mobile_scanner/src/objects/barcode.dart';
 import 'package:mobile_scanner/src/web/media.dart';
@@ -80,7 +81,7 @@ mixin InternalStreamCreation on WebBarcodeReaderBase {
         'video': VideoOptions(
           facingMode:
               cameraFacing == CameraFacing.front ? 'user' : 'environment',
-        )
+        ),
       };
     } else {
       constraints = {'video': true};
@@ -147,8 +148,8 @@ mixin InternalTorchDetection on InternalStreamCreation {
       final track = localMediaStream?.getVideoTracks();
       await track?.first.applyConstraints({
         'advanced': [
-          {'torch': enabled}
-        ]
+          {'torch': enabled},
+        ],
       });
     }
   }

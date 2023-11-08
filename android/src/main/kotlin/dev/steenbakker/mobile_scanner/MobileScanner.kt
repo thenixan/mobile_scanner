@@ -8,7 +8,6 @@ import android.media.CamcorderProfile
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.util.Size
 import android.view.Surface
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -279,9 +278,8 @@ class MobileScanner(
 //                analysisBuilder.setTargetResolution(Size(1440, 1920))
             val cameraProfile = CamcoderProfile.getCameraProfile(CamcorderProfile.QUALITY_HIGH)
             
-            analysisBuilder.setTargetResolution(
-                Size(cameraProfile.videoFrameWidth, cameraProfile.videoFrameHeight)
-            ))
+            analysisBuilder.setTargetResolution(Size(cameraProfile.videoFrameWidth, cameraProfile.videoFrameHeight))
+
             val displayManager = activity.applicationContext.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
 
             if (cameraResolution != null) {

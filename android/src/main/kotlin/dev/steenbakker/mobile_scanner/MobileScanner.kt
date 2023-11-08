@@ -276,7 +276,7 @@ class MobileScanner(
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
 
 //                analysisBuilder.setTargetResolution(Size(1440, 1920))
-            val cameraProfile = CamcoderProfile.getCameraProfile(CamcorderProfile.QUALITY_HIGH)
+            val cameraProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
             
             analysisBuilder.setTargetResolution(Size(cameraProfile.videoFrameWidth, cameraProfile.videoFrameHeight))
 

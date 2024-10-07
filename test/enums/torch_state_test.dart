@@ -7,6 +7,8 @@ void main() {
       const values = <int, TorchState>{
         0: TorchState.off,
         1: TorchState.on,
+        2: TorchState.auto,
+        -1: TorchState.unavailable,
       };
 
       for (final MapEntry<int, TorchState> entry in values.entries) {
@@ -17,8 +19,8 @@ void main() {
     });
 
     test('invalid raw value throws argument error', () {
-      const int negative = -1;
-      const int outOfRange = 2;
+      const int negative = -2;
+      const int outOfRange = 3;
 
       expect(() => TorchState.fromRawValue(negative), throwsArgumentError);
       expect(() => TorchState.fromRawValue(outOfRange), throwsArgumentError);
@@ -26,8 +28,10 @@ void main() {
 
     test('can be converted to raw value', () {
       const values = <TorchState, int>{
+        TorchState.unavailable: -1,
         TorchState.off: 0,
         TorchState.on: 1,
+        TorchState.auto: 2,
       };
 
       for (final MapEntry<TorchState, int> entry in values.entries) {

@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.hardware.display.DisplayManager
+import android.media.CamcorderProfile
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
@@ -298,6 +299,11 @@ class MobileScanner(
             // Build the analyzer to be passed on to MLKit
             val analysisBuilder = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+
+            val cameraProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
+
+            analysisBuilder.setTargetResolution(Size(cameraProfile.videoFrameWidth, cameraProfile.videoFrameHeight))
+
             val displayManager = activity.applicationContext.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
 
             if (cameraResolution != null) {
